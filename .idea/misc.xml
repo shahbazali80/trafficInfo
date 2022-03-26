@@ -3,8 +3,18 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Shahbaz/TrafficScotlandApp/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.226" />
+        <entry key="..\:/Shahbaz/TrafficScotlandApp/app/src/main/res/drawable/ic_baseline_dangerous_24.xml" value="0.321" />
+        <entry key="..\:/Shahbaz/TrafficScotlandApp/app/src/main/res/drawable/ic_baseline_info_24.xml" value="0.321" />
+        <entry key="..\:/Shahbaz/TrafficScotlandApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.226" />
+        <entry key="..\:/Shahbaz/TrafficScotlandApp/app/src/main/res/font/courgette.xml" value="0.39076923076923076" />
+        <entry key="..\:/Shahbaz/TrafficScotlandApp/app/src/main/res/layout/activity_detail.xml" value="0.36666666666666664" />
         <entry key="..\:/Shahbaz/TrafficScotlandApp/app/src/main/res/layout/activity_main.xml" value="0.35260416666666666" />
+        <entry key="..\:/Shahbaz/TrafficScotlandApp/app/src/main/res/layout/fragment_current_incidents.xml" value="0.36666666666666664" />
+        <entry key="..\:/Shahbaz/TrafficScotlandApp/app/src/main/res/layout/fragment_planned_roadworks.xml" value="0.36666666666666664" />
+        <entry key="..\:/Shahbaz/TrafficScotlandApp/app/src/main/res/layout/fragment_roadworks.xml" value="0.36666666666666664" />
         <entry key="..\:/Shahbaz/TrafficScotlandApp/app/src/main/res/layout/item_layout.xml" value="0.36666666666666664" />
+        <entry key="..\:/Shahbaz/TrafficScotlandApp/app/src/main/res/menu/bottom_nav_menu.xml" value="0.36666666666666664" />
       </map>
     </option>
   </component>

@@ -1,15 +1,16 @@
-package com.example.trafficscotlandapp
+package com.example.trafficscotlandapp.adapters
 
-import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.trafficscotlandapp.R
+import com.example.trafficscotlandapp.models.CurrentIncidents
+import com.example.trafficscotlandapp.ui.DetailActivity
 
 class TrafficInfoAdapter(private val allRows: ArrayList<CurrentIncidents>) : RecyclerView.Adapter<TrafficInfoAdapter.ViewHolder>() {
-
-   // private var allRows = ArrayList<CurrentIncidents>()
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -35,13 +36,13 @@ class TrafficInfoAdapter(private val allRows: ArrayList<CurrentIncidents>) : Rec
         holder.tvDesc.text = description
 
         holder.itemView.setOnClickListener {
-            //val intent = Intent(context, MainActivity::class.java)
-            //intent.putExtra("isNew", "0")
-            //intent.putExtra("noteTitle", title)
-            //intent.putExtra("noteDescription", desc)
-            //intent.putExtra("noteDate", noteDate)
-            //intent.putExtra("noteId", id)
-            //context.startActivity(intent)
+            val intent = Intent(it.context, DetailActivity::class.java)
+            intent.putExtra("title", title)
+            intent.putExtra("description", description)
+            intent.putExtra("link", link)
+            intent.putExtra("latLng", latLng)
+            intent.putExtra("pubDate", pubDate)
+            it.context.startActivity(intent)
         }
     }
 

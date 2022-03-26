@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_nav"
+    app:startDestination="@id/currentIncidentsFragment">
+
+    <fragment
+        android:id="@+id/currentIncidentsFragment"
+        android:name="com.example.trafficscotlandapp.ui.currentincident.CurrentIncidentsFragment"
+        android:label="Current Incidents"
+        tools:layout="@layout/fragment_current_incidents" />
+    <fragment
+        android:id="@+id/roadworksFragment"
+        android:name="com.example.trafficscotlandapp.ui.roadworks.RoadworksFragment"
+        android:label="Roadworks"
+        tools:layout="@layout/fragment_roadworks" />
+    <fragment
+        android:id="@+id/plannedRoadworksFragment"
+        android:name="com.example.trafficscotlandapp.ui.plannedroadworks.PlannedRoadworksFragment"
+        android:label="Planned Roadworks"
+        tools:layout="@layout/fragment_planned_roadworks" />
+</navigation>
