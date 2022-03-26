@@ -3,8 +3,13 @@ package com.example.trafficscotlandapp
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import okhttp3.*
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
@@ -32,6 +37,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        recyclerview.layoutManager = LinearLayoutManager(this)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            apiRequest()
+//            async{}
+//            async{fetchItemInfo()}
+//            async{setAdapterValues()}
+        }
+    }
+
+    private fun apiRequest() {
         val request: Request = Request.Builder()
             .url(url)
             .build()
@@ -46,19 +62,24 @@ class MainActivity : AppCompatActivity() {
                 myResponse = response.body!!.string()
                 //Log.d("response", myResponse)
                 //testing()
-                againTesting()
+                fetchRootInfo()
+                fetchItemInfo()
+                setAdapterValues()
+                //Log.d("arrayValues", accidentList.toString())
             }
         })
+    }
 
-        for (item in accidentList){
-            Log.d("array", item.title+"\n")
-            Log.d("array", item.description+"\n")
-            Log.d("array", item.link+"\n")
-            Log.d("array", item.pubDate+"\n\n")
+    private fun setAdapterValues() {
+
+        runOnUiThread {
+            val a = accidentList
+            val adapter = TrafficInfoAdapter(accidentList)
+            recyclerview.adapter = adapter
         }
     }
 
-    private fun againTesting() {
+    private fun fetchItemInfo() {
         try {
 
             var response = ""
@@ -73,6 +94,7 @@ class MainActivity : AppCompatActivity() {
             parser.setInput(StringReader(myResponse))
             var eventType = parser.eventType
 
+            buffer.append("Item Tag Values\n")
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 val tagName = parser.name
 
@@ -84,36 +106,96 @@ class MainActivity : AppCompatActivity() {
 
                     XmlPullParser.END_TAG -> if (tagName.equals("item", ignoreCase = true)) {
                         foundItem = false
+                        //Log.d("tagVales", titleTxt+ descriptionTxt+ pubDateTxt+ LatLng(latTxt.toDoubleOrNull() ?: 0.0, longTxt.toDoubleOrNull() ?: 0.0) + linkTxt+"\n\n")
+                        accidentList.add(CurrentIncidents(titleTxt,descriptionTxt,pubDateTxt,LatLng(latTxt.toDoubleOrNull() ?: 0.0, longTxt.toDoubleOrNull() ?: 0.0),linkTxt))
                     } else if (foundItem && tagName.equals("title", ignoreCase = true)) {
-                        //buffer.append("title: $text\n")
+                        buffer.append("title: $text\n")
                         titleTxt = text
                     } else if (foundItem && tagName.contains("description", ignoreCase = true)) {
-                        //buffer.append("description: $text\n")
+                        buffer.append("description: $text\n")
                         descriptionTxt = text
                     } else if (foundItem && tagName.equals("link", ignoreCase = true)) {
-                        //buffer.append("link: $text\n")
+                        buffer.append("link: $text\n")
                         linkTxt = text
                     } else if (foundItem && tagName.contains("point", ignoreCase = true)) {
-                        //buffer.append("point: $text\n")
+                        buffer.append("point: $text\n")
                         val latLngParts: List<String> = text.split(" ")
                         latTxt = latLngParts[0]
                         longTxt = latLngParts[1]
                     } else if (foundItem && tagName.equals("pubDate", ignoreCase = true)) {
-                        //buffer.append("pubDate: $text\n")
+                        buffer.append("pubDate: $text\n")
+                        pubDateTxt = text
+                    }
+                }
+                eventType = parser.next()
+            }
+
+        } catch (e: XmlPullParserException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun fetchRootInfo() {
+        try {
+
+            var response = ""
+            var text = ""
+            var foundItem = false
+
+            val buffer = StringBuffer()
+
+            val factory = XmlPullParserFactory.newInstance()
+            factory.isNamespaceAware = true
+            val parser = factory.newPullParser()
+            parser.setInput(StringReader(myResponse))
+            var eventType = parser.eventType
+
+            buffer.append("Root Tag Values\n")
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                val tagName = parser.name
+
+                when (eventType) {
+                    XmlPullParser.START_TAG -> if (tagName.equals("channel", ignoreCase = true)) {
+                        foundItem = true
+                    }
+                    XmlPullParser.TEXT -> text = parser.text
+
+                    XmlPullParser.END_TAG -> if (tagName.equals("channel", ignoreCase = true)) {
+                        foundItem = false
+                    } else if (foundItem && tagName.equals("title", ignoreCase = true)) {
+                        buffer.append("title: $text\n")
+                        titleTxt = text
+                    } else if (foundItem && tagName.contains("description", ignoreCase = true)) {
+                        buffer.append("description: $text\n")
+                        descriptionTxt = text
+                    } else if (foundItem && tagName.equals("link", ignoreCase = true)) {
+                        buffer.append("link: $text\n")
+                        linkTxt = text
+                    } else if (foundItem && tagName.contains("lastBuildDate", ignoreCase = true)) {
+                        buffer.append("lastBuildDate: $text\n")
+                        val latLngParts: List<String> = text.split(" ")
+                        latTxt = latLngParts[0]
+                        longTxt = latLngParts[1]
+                    } else if (foundItem && tagName.equals("docs", ignoreCase = true)) {
+                        buffer.append("docs: $text\n")
+                        pubDateTxt = text
+                    } else if (foundItem && tagName.equals("generator", ignoreCase = true)) {
+                        buffer.append("generator: $text\n")
                         pubDateTxt = text
                     }
                 }
 
-                if(foundItem)
-                    accidentList.add(CurrentIncidents(titleTxt,descriptionTxt,pubDateTxt, LatLng(latTxt.toDoubleOrNull()?:0.0,longTxt.toDoubleOrNull()?:0.0),linkTxt))
+                if(foundItem) {
+                    //Log.d("tagVales", titleTxt+ descriptionTxt+ pubDateTxt+ LatLng(latTxt.toDoubleOrNull() ?: 0.0, longTxt.toDoubleOrNull() ?: 0.0)+ linkTxt+"\n")
+                }
 
                 eventType = parser.next()
             }
 
-            //Log.d("tagVales", buffer.toString())
-            Log.d("tagVales", accidentList.toString())
-
-            tv_response.text = response
+            Log.d("tagVales", buffer.toString()+"\n\n")
+            //Log.d("tagVales", accidentList.toString())
 
         } catch (e: XmlPullParserException) {
             e.printStackTrace()
@@ -154,8 +236,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 eventType = xpp.next()
             }
-
-            tv_response.text = response
 
         } catch (e: XmlPullParserException) {
             e.printStackTrace()
